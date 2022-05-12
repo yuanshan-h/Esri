@@ -70,7 +70,7 @@ headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"
 }
 cityname='重庆'
-line='347路' 
+line='346路' 
 url = 'https://restapi.amap.com/v3/bus/linename?s=rsv3&extensions=all&key=a5b7479db5b24fd68cedcf24f482c156&output=json&city={}&offset=1&keywords={}&platform=JS'.format(cityname,line)
  #1、获取数据 
 r = requests.get(url,headers).text 
@@ -92,10 +92,10 @@ for st in rt['buslines'][0]['busstops']:
 dt['station_name'] = station_name 
 dt['station_coords'] = station_coords 
 # print(station_coords)
-dm = pd.DataFrame(dt) 
-print(dt)
-dm['latitude'], dm['longitude'] = dm['station_coords'].str.split(',', 1).str#将坐标拆解为经度和纬度 
-dm.to_csv('表格1_{}{}公交基本信息.csv'.format(cityname,line),encoding='utf-8-sig')
+# dm = pd.DataFrame(dt) 
+# print(dt)
+# dm['latitude'], dm['longitude'] = dm['station_coords'].str.split(',', 1).str#将坐标拆解为经度和纬度 
+# dm.to_csv('表格1_{}{}公交基本信息.csv'.format(cityname,line),encoding='utf-8-sig')
 
 # 坐标转换
 station_coords_t = lines_wgs84(station_coords)
@@ -106,9 +106,11 @@ for i in station_coords_t:
     str2 = ','.join(str1)
     lines.append(str2)
     # print(lines)
+dt['station_coords']=lines
 tr = pd.DataFrame(dt)
-tr['latitude'], tr['longitude'] = tr['lines'].str.split(',', 1).str
-tr.to_csv('表格1_{}{}公交基本信息T.csv'.format(cityname,line),encoding='utf-8-sig')
+tr['latitude'], tr['longitude'] = tr['station_coords'].str.split(',', 1).str
+# tr.to_csv('表格1_{}{}公交基本信息T.csv'.format(cityname,line),encoding='utf-8-sig')
+tr.to_csv('表格1公交基本信息T.csv',header=False,mode='a',encoding='utf-8-sig')
 #4、获取沿途路径坐标（行驶轨迹）并保存在“公交路线轨迹表格中” 
 tmp={} 
 polyline=rt['buslines'][0]['polyline'] 
@@ -119,8 +121,9 @@ for i in polyline.split(";"):
         
 path=pd.DataFrame(tmp) 
 path['latitude'], path['longitude'] = path['station_coords'].str.split(',', 1).str#将坐标拆解为经度和纬度 
-path.to_csv('表格2_{}{}公交路线轨迹.csv'.format(cityname,line),encoding='utf-8-sig')
-w=shapefile.Writer('{}{}公交路线轨迹.shp'.format(cityname,line),encoding='utf-8-sig')
+# path.to_csv('表格2_{}{}公交路线轨迹.csv'.format(cityname,line),encoding='utf-8-sig')
+# w=shapefile.Writer('公交路线轨迹.shp',encoding='utf-8-sig')
+w=shapefile.Editor('公交路线轨迹.shp',encoding='utf-8-sig')
 w.field('name', 'C')
 test = lines_wgs84(polylines)#经纬度转换为wgs84坐标系
 w.line([test])
