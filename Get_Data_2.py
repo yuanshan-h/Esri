@@ -93,17 +93,21 @@ dt['station_name'] = station_name
 dt['station_coords'] = station_coords 
 # print(station_coords)
 dm = pd.DataFrame(dt) 
+print(dt)
 dm['latitude'], dm['longitude'] = dm['station_coords'].str.split(',', 1).str#将坐标拆解为经度和纬度 
 dm.to_csv('表格1_{}{}公交基本信息.csv'.format(cityname,line),encoding='utf-8-sig')
+
 # 坐标转换
-station_coords_t = []
-s = lines_wgs84(station_coords)
-print(s)
-for i in range(len(s)):
-    print(s[i])
-print(station_coords_t)
+station_coords_t = lines_wgs84(station_coords)
+lines = []
+print(station_coords)
+for i in station_coords_t:
+    str1 = map(str,i)
+    str2 = ','.join(str1)
+    lines.append(str2)
+    # print(lines)
 tr = pd.DataFrame(dt)
-tr['latitude'], tr['longitude'] = tr['station_coords_t'].str.split(',', 1).str
+tr['latitude'], tr['longitude'] = tr['lines'].str.split(',', 1).str
 tr.to_csv('表格1_{}{}公交基本信息T.csv'.format(cityname,line),encoding='utf-8-sig')
 #4、获取沿途路径坐标（行驶轨迹）并保存在“公交路线轨迹表格中” 
 tmp={} 
