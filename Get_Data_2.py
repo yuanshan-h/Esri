@@ -119,7 +119,7 @@ for i in [347,346]:
     tr.to_csv('表格1公交基本信息T.csv',header=False,mode='a',encoding='utf-8-sig')
     for i in range(len(station_coords_t)):
         wp.point([i])  #生成线要素
-        wp.record(name=j)
+        wp.record(name=i)
     #4、获取沿途路径坐标（行驶轨迹）并保存在“公交路线轨迹表格中” 
     polyline=rt['buslines'][0]['polyline'] 
 
